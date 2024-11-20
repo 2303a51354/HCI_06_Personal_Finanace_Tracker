@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 90vw;
+            height: 90vh;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card {
+            display: none;
+            color: #333;
+        }
+        .card.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h2, h3, p {
+            margin: 10px 0;
+        }
+        .image {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .button {
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 40%;
+        }
+        .button-gray {
+            background-color: #695b5b;
+        }
+        .button-blue {
+            background-color: #4682b4;
+        }
+        .input-field, .select-field {
+            width: 80%;
+            padding: 10px;
+            margin: 12px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    </style>
+    <script>
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.card');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function validateAndNext(currentPage, nextPage) {
+            let isValid = true;
+
+            if (currentPage === 'page1') {
+                const totalIncome = document.getElementById("totalIncome").value;
+                const currentBalance = document.getElementById("currentBalance").value;
+                const savingGoal = document.getElementById("savingGoal").value;
+
+                if (!totalIncome || !currentBalance || !savingGoal) {
+                    alert("Please fill in all fields.");
+                    isValid = false;
+                }
+            }
+
+            if (currentPage === 'page2') {
+                const selectedMonth = document.getElementById("expenseMonth").value;
+                const dayOfMonth = document.getElementById("expenseDay").value;
+                const foodExpense = document.getElementById("foodExpense").value;
+                const shoppingExpense = document.getElementById("shoppingExpense").value;
+                const groceriesExpense = document.getElementById("groceriesExpense").value;
+
+                if (!selectedMonth || !dayOfMonth || !foodExpense || !shoppingExpense || !groceriesExpense) {
+                    alert("Please fill in all fields for expenses.");
+                    isValid = false;
+                }
+            }
+
+            if (isValid) {
+                if (nextPage === 'page3') {
+                    calculateSummary();
+                }
+                showPage(nextPage);
+            }
+        }
+
+        function calculateSummary() {
+            const totalIncome = parseFloat(document.getElementById("totalIncome").value) || 0;
+            const currentBalance = parseFloat(document.getElementById("currentBalance").value) || 0;
+            const savingGoal = parseFloat(document.getElementById("savingGoal").value) || 0;
+
+            const foodExpense = parseFloat(document.getElementById("foodExpense").value) || 0;
+            const shoppingExpense = parseFloat(document.getElementById("shoppingExpense").value) || 0;
+            const groceriesExpense = parseFloat(document.getElementById("groceriesExpense").value) || 0;
+
+            const totalExpenses = foodExpense + shoppingExpense + groceriesExpense;
+            const remainingBalance = currentBalance + totalIncome - totalExpenses;
+
+            let savingGoalStatus;
+            if (remainingBalance >= savingGoal) {
+                savingGoalStatus = "Successfully Achieved Your Goal";
+            } else {
+                savingGoalStatus = "Goal Not Achieved Yet";
+            }
+
+            document.getElementById("summaryTotalIncome").textContent = `$${totalIncome.toFixed(2)}`;
+            document.getElementById("summaryTotalExpenses").textContent = `$${totalExpenses.toFixed(2)}`;
+            document.getElementById("summaryRemainingBalance").textContent = `$${remainingBalance.toFixed(2)}`;
+            document.getElementById("summarySavingGoalStatus").textContent = savingGoalStatus;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="entryPage" class="card active">
+            <h2>Welcome to Your Personal Finance Tracker</h2>
+            <button class="button button-blue" onclick="showPage('page1')">Start</button>
+        </div>
+
+        <div id="page1" class="card">
+            <h2>PERSONAL FINANCE TRACKER</h2>
+            <label for="totalIncome">Total Income:</label>
+            <input type="number" id="totalIncome" class="input-field" placeholder="Enter your income">
+            <label for="currentBalance">Current Balance:</label>
+            <input type="number" id="currentBalance" class="input-field" placeholder="Enter your current balance">
+            <label for="savingGoal">Saving Goal:</label>
+            <input type="number" id="savingGoal" class="input-field" placeholder="Enter your saving goal">
+            <button class="button button-gray" onclick="validateAndNext('page1', 'page2')">Next</button>
+        </div>
+
+        <div id="page2" class="card">
+            <h3>Total Expenses</h3>
+            <label for="expenseMonth">Month:</label>
+            <select id="expenseMonth" class="select-field">
+                <option value="">Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+                <!-- Add more months -->
+            </select>
+            <label for="expenseDay">Day:</label>
+            <input type="number" id="expenseDay" class="input-field" placeholder="Enter day of the month">
+            <label for="foodExpense">Food:</label>
+            <input type="number" id="foodExpense" class="input-field" placeholder="Enter amount for food">
+            <label for="shoppingExpense">Shopping:</label>
+            <input type="number" id="shoppingExpense" class="input-field" placeholder="Enter amount for shopping">
+            <label for="groceriesExpense">Groceries:</label>
+            <input type="number" id="groceriesExpense" class="input-field" placeholder="Enter amount for groceries">
+            <button class="button button-gray" onclick="showPage('page1')">Back</button>
+            <button class="button button-gray" onclick="validateAndNext('page2', 'page3')">Next</button>
+        </div>
+
+        <div id="page3" class="card">
+            <h3>Summary</h3>
+            <p><strong>Total Income:</strong> <span id="summaryTotalIncome">$0.00</span></p>
+            <p><strong>Total Expenses:</strong> <span id="summaryTotalExpenses">$0.00</span></p>
+            <p><strong>Remaining Balance:</strong> <span id="summaryRemainingBalance">$0.00</span></p>
+            <p><strong>Saving Goal Status:</strong> <span id="summarySavingGoalStatus">Not Evaluated</span></p>
+            <button class="button button-gray" onclick="showPage('page2')">Back</button>
+            <button class="button button-blue">Finish</button>
+        </div>
+    </div>
+</body>
+</html>
